@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排序演算法動畫演示 - 主頁</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1a1e36 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #e5e7eb;
+        }
+
+        .container {
+            background: linear-gradient(135deg, #1e293b 0%, #16213e 100%);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(6, 182, 212, 0.1);
+            padding: 60px 40px;
+            max-width: 1000px;
+            width: 100%;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            color: #e5e7eb;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #06b6d4, #0ea5e9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #a1a1a6;
+            line-height: 1.6;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #1f2937 0%, #1a2332 100%);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+            border: 2px solid rgba(6, 182, 212, 0.2);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #06b6d4, #0ea5e9);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 50px rgba(6, 182, 212, 0.25), 0 0 30px rgba(6, 182, 212, 0.1);
+            border-color: rgba(6, 182, 212, 0.5);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card h2 {
+            color: #e5e7eb;
+            margin-bottom: 12px;
+            font-size: 1.5em;
+        }
+
+        .card p {
+            color: #a1a1a6;
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .card-features li {
+            color: #9ca3af;
+            margin-bottom: 8px;
+            padding-left: 22px;
+            position: relative;
+            font-size: 0.9em;
+            transition: color 0.3s ease;
+        }
+
+        .card-features li:hover {
+            color: #06b6d4;
+        }
+
+        .card-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #06b6d4;
+            font-weight: bold;
+        }
+
+        .card-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #06b6d4, #0ea5e9);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .card-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+            left: 0;
+        }
+
+        .card-button:hover::before {
+            left: 100%;
+        }
+
+        .features-section {
+            background: linear-gradient(135deg, #1f2937 0%, #1a2332 100%);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .features-section h2 {
+            color: #e5e7eb;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            text-align: center;
+            background: linear-gradient(135deg, #06b6d4, #0ea5e9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-item {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.05), rgba(14, 165, 233, 0.05));
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #06b6d4;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.2);
+        }
+
+        .feature-item h3 {
+            color: #60a5fa;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .feature-item p {
+            color: #a1a1a6;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .footer {
+            text-align: center;
+            color: #6b7280;
+            border-top: 1px solid rgba(6, 182, 212, 0.1);
+            padding-top: 30px;
+            font-size: 0.95em;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #06b6d4, #0ea5e9);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .container {
+                padding: 40px 20px;
+            }
+
+            .cards-grid {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 排序演算法動畫演示</h1>
+            <p>互動式學習排序演算法的原理、複雜度分析與實際運作過程</p>
+        </div>
+
+        <div class="cards-grid">
+            <div class="card">
+                <div class="card-icon">🫧</div>
+                <span class="badge">經典演算法</span>
+                <h2>氣泡排序法</h2>
+                <p>最簡單直觀的排序演算法，通過重複比較相鄰元素完成排序</p>
+                
+                <ul class="card-features">
+                    <li>動畫演示排序過程</li>
+                    <li>自定義數值輸入</li>
+                    <li>實時複雜度分析</li>
+                    <li>詳細原理說明</li>
+                    <li>速度控制調整</li>
+                </ul>
+
+                <a href="bubble_sort_animation.html" class="card-button">
+                    進入演示 →
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🎯</div>
+                <span class="badge">簡單排序</span>
+                <h2>選擇排序法</h2>
+                <p>每次選擇最小元素放到正確位置，交換次數少於氣泡排序</p>
+                
+                <ul class="card-features">
+                    <li>搜尋階段動畫</li>
+                    <li>交換次數最少化</li>
+                    <li>自定義數值輸入</li>
+                    <li>非穩定排序展示</li>
+                    <li>複雜度分析對比</li>
+                </ul>
+
+                <a href="selection_sort_animation.html" class="card-button">
+                    進入演示 →
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">📍</div>
+                <span class="badge">適應性強</span>
+                <h2>插入排序法</h2>
+                <p>模擬撲克牌整理，已排序資料時效率高，最好情況為 O(n)</p>
+                
+                <ul class="card-features">
+                    <li>模擬實際插入過程</li>
+                    <li>適應已排序資料</li>
+                    <li>穩定排序演示</li>
+                    <li>自定義數值輸入</li>
+                    <li>移動操作可視化</li>
+                </ul>
+
+                <a href="insertion_sort_animation.html" class="card-button">
+                    進入演示 →
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🔀</div>
+                <span class="badge">高效演算法</span>
+                <h2>合併排序法</h2>
+                <p>分治策略，所有情況下都是 O(n log n)，性能最穩定的排序</p>
+                
+                <ul class="card-features">
+                    <li>遞歸分割演示</li>
+                    <li>合併過程動畫</li>
+                    <li>分治思想展示</li>
+                    <li>穩定排序算法</li>
+                    <li>複雜度優勢對比</li>
+                </ul>
+
+                <a href="merge_sort_animation.html" class="card-button">
+                    進入演示 →
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">⏱️</div>
+                <span class="badge">實用排序</span>
+                <h2>Timsort</h2>
+                <p>混合排序演算法，將插入排序和合併排序結合，Python與Java官方推薦</p>
+                
+                <ul class="card-features">
+                    <li>Run分割與排序</li>
+                    <li>自適應合併過程</li>
+                    <li>實時統計顯示</li>
+                    <li>穩定排序算法</li>
+                    <li>最佳實踐演示</li>
+                </ul>
+
+                <a href="timsort_animation.html" class="card-button">
+                    進入演示 →
+                </a>
+            </div>
+        </div>
+
+        <div class="features-section">
+            <h2>✨ 主要功能特色</h2>
+            <div class="features-list">
+                <div class="feature-item">
+                    <h3>🎨 彩色動畫</h3>
+                    <p>使用顏色變化直觀展示排序過程中元素的狀態變化</p>
+                </div>
+
+                <div class="feature-item">
+                    <h3>⌨️ 自由輸入</h3>
+                    <p>支持用戶自定義數值輸入，演示實際應用場景</p>
+                </div>
+
+                <div class="feature-item">
+                    <h3>📊 實時統計</h3>
+                    <p>顯示比較次數、交換次數、進度等詳細數據</p>
+                </div>
+
+                <div class="feature-item">
+                    <h3>⚡ 複雜度分析</h3>
+                    <p>詳細展示時間和空間複雜度，深入理解演算法效率</p>
+                </div>
+
+                <div class="feature-item">
+                    <h3>🎛️ 速度控制</h3>
+                    <p>調整播放速度，便於觀察排序的每一步細節</p>
+                </div>
+
+                <div class="feature-item">
+                    <h3>📚 原理說明</h3>
+                    <p>配合文字敘述，深入講解演算法的工作原理與優化技巧</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-section" style="background: linear-gradient(135deg, #1f4c4c 0%, #0d3a3a 100%); border-left: 4px solid #06b6d4;">
+            <h2>📖 如何使用？</h2>
+            <div style="max-width: 600px; margin: 0 auto;">
+                <ol style="color: #a1a1a6; line-height: 2; padding-left: 25px; font-size: 1em;">
+                    <li><strong style="color: #06b6d4;">選擇排序法</strong>：從首頁五個卡片中選擇需要學習的排序演算法</li>
+                    <li><strong style="color: #06b6d4;">自定義輸入</strong>：輸入您的數值，或點擊「隨機生成」</li>
+                    <li><strong style="color: #06b6d4;">調整速度</strong>：使用速度滑塊控制動畫播放快慢</li>
+                    <li><strong style="color: #06b6d4;">開始排序</strong>：點擊「開始排序」觀看整個過程</li>
+                    <li><strong style="color: #06b6d4;">學習分析</strong>：觀察動畫同時閱讀原理說明與複雜度分析</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="features-section" style="background: linear-gradient(135deg, #1f2937 0%, #1a2332 100%);">
+            <h2>🔍 常見排序演算法對比</h2>
+            <div style="overflow-x: auto; max-width: 100%;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.95em; color: #a1a1a6;">
+                    <thead>
+                        <tr style="background: rgba(6, 182, 212, 0.15); border-bottom: 2px solid rgba(6, 182, 212, 0.3);">
+                            <th style="padding: 12px; text-align: left; border: 1px solid rgba(6, 182, 212, 0.2); color: #06b6d4;">排序法</th>
+                            <th style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.2); color: #06b6d4;">最好</th>
+                            <th style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.2); color: #06b6d4;">平均</th>
+                            <th style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.2); color: #06b6d4;">最壞</th>
+                            <th style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.2); color: #06b6d4;">空間</th>
+                            <th style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.2); color: #06b6d4;">穩定</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid rgba(6, 182, 212, 0.1);">
+                            <td style="padding: 12px; border: 1px solid rgba(6, 182, 212, 0.1);"><strong>🫧 氣泡排序</strong></td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n²)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n²)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(1)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1); color: #06b6d4;">✓</td>
+                        </tr>
+                        <tr style="background: rgba(6, 182, 212, 0.05); border-bottom: 1px solid rgba(6, 182, 212, 0.1);">
+                            <td style="padding: 12px; border: 1px solid rgba(6, 182, 212, 0.1);"><strong>🎯 選擇排序</strong></td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n²)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n²)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n²)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(1)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1); color: #f87171;">✗</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid rgba(6, 182, 212, 0.1);">
+                            <td style="padding: 12px; border: 1px solid rgba(6, 182, 212, 0.1);"><strong>📍 插入排序</strong></td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n²)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n²)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(1)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1); color: #06b6d4;">✓</td>
+                        </tr>
+                        <tr style="background: rgba(6, 182, 212, 0.05); border-bottom: 1px solid rgba(6, 182, 212, 0.1);">
+                            <td style="padding: 12px; border: 1px solid rgba(6, 182, 212, 0.1);"><strong>🔀 合併排序</strong></td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n log n)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n log n)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n log n)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1); color: #06b6d4;">✓</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid rgba(6, 182, 212, 0.1);"><strong>⏱️ Timsort</strong></td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n log n)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n log n)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1);">O(n)</td>
+                            <td style="padding: 12px; text-align: center; border: 1px solid rgba(6, 182, 212, 0.1); color: #06b6d4;">✓</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>💡 提示：最適合在 Chrome、Firefox、Safari 等現代瀏覽器中使用</p>
+            <p style="margin-top: 15px;">© 2026 排序演算法學習平台 | 用動畫學演算法</p>
+        </div>
+    </div>
+</body>
+</html>
